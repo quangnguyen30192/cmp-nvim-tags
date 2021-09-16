@@ -3,10 +3,10 @@ local util = require('vim.lsp.util')
 
 local source = {}
 
-local function buildDocumentation(completion_item)
+local function buildDocumentation(word)
   local document = {}
 
-  local tags = vim.fn.taglist(completion_item.word)
+  local tags = vim.fn.taglist(word)
   local doc = ''
   for i, tag in ipairs(tags) do
     if 10 < i then
