@@ -6,7 +6,11 @@ local source = {}
 local function buildDocumentation(word)
   local document = {}
 
-  local tags = vim.fn.taglist(word)
+  local list_tags_ok, tags = pcall("vim.fn.taglist", word)
+  if not list_tags_ok then
+    return ""
+  end
+
   local doc = ''
   for i, tag in ipairs(tags) do
     if 10 < i then
