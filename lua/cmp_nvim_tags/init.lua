@@ -6,7 +6,7 @@ local source = {}
 local function buildDocumentation(word)
   local document = {}
 
-  local list_tags_ok, tags = pcall("vim.fn.taglist", word)
+  local list_tags_ok, tags = pcall(vim.fn.taglist, word)
   if not list_tags_ok then
     return ""
   end
