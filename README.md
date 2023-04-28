@@ -19,7 +19,12 @@ use {
   config = function ()
     require'cmp'.setup {
     sources = {
-      { name = 'tags' },
+      {
+        name = 'tags',
+        option = {
+          complete_defer = 100,
+        },
+      },
       -- more sources
     }
   }
