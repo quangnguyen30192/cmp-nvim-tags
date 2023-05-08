@@ -6,11 +6,11 @@ local default_options = {
   complete_defer = 100,
 }
 
-local function buildDocumentation(word)
+local function buildDocumentation(word, bufname)
   local document = {}
 
   local exact_word = '^' .. word .. '$'
-  local list_tags_ok, tags = pcall(vim.fn.taglist, exact_word)
+  local list_tags_ok, tags = pcall(vim.fn.taglist, exact_word, bufname)
   if not list_tags_ok then
     return ""
   end
@@ -101,7 +101,7 @@ end
 function source:resolve(completion_item, callback)
   completion_item.documentation = {
     kind = cmp.lsp.MarkupKind.Markdown,
-    value = buildDocumentation(completion_item.word)
+    value = buildDocumentation(completion_item.word, vim.api.nvim_buf_get_name(0))
   }
 
   callback(completion_item)
