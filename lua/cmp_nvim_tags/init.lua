@@ -78,7 +78,7 @@ end
 
 function source:complete(request, callback)
   local items = {}
-  global_option = vim.tbl_deep_extend('keep', request.option or {}, default_options)
+  global_options = vim.tbl_deep_extend('keep', request.option or {}, default_options)
   vim.defer_fn(vim.schedule_wrap(function()
     local input = string.sub(request.context.cursor_before_line, request.offset)
     local _, tags = pcall(function()
@@ -102,7 +102,7 @@ function source:complete(request, callback)
       items = items,
       isIncomplete = true
     })
-  end), global_option.complete_defer)
+  end), global_options.complete_defer)
 end
 
 function source:resolve(completion_item, callback)
