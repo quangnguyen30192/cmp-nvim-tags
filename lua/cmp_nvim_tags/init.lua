@@ -4,20 +4,27 @@ local util = require('vim.lsp.util')
 local source = {}
 local default_options = {
   complete_defer = 100,
+  max_items = 10,
+  exact_match = true,
+  current_buffer_only = true,
 }
+local global_options = {}
 
 local function buildDocumentation(word, bufname)
   local document = {}
 
-  local exact_word = '^' .. word .. '$'
-  local list_tags_ok, tags = pcall(vim.fn.taglist, exact_word, bufname)
+  if global_options.exact_match then
+    word = '^' .. word .. '$'
+  end
+  local list_tags_ok, tags = bufname and pcall(vim.fn.taglist, word, bufname)
+    or pcall(vim.fn.taglist, word)
   if not list_tags_ok then
     return ""
   end
 
   local doc = ''
   for i, tag in ipairs(tags) do
-    if 10 < i then
+    if global_options.max_items < i then
       table.insert(document, ('...and %d more'):format(#tags - 10))
       break
     end
@@ -71,7 +78,7 @@ end
 
 function source:complete(request, callback)
   local items = {}
-  local option = vim.tbl_deep_extend('keep', request.option or {}, default_options)
+  global_option = vim.tbl_deep_extend('keep', request.option or {}, default_options)
   vim.defer_fn(vim.schedule_wrap(function()
     local input = string.sub(request.context.cursor_before_line, request.offset)
     local _, tags = pcall(function()
@@ -95,13 +102,15 @@ function source:complete(request, callback)
       items = items,
       isIncomplete = true
     })
-  end), option.complete_defer)
+  end), global_option.complete_defer)
 end
 
 function source:resolve(completion_item, callback)
+  local bufname = global_options.current_buffer_only and vim.api.nvim_buf_get_name(0)
+    or nil
   completion_item.documentation = {
     kind = cmp.lsp.MarkupKind.Markdown,
-    value = buildDocumentation(completion_item.word, vim.api.nvim_buf_get_name(0))
+    value = buildDocumentation(completion_item.word, bufname)
   }
 
   callback(completion_item)
