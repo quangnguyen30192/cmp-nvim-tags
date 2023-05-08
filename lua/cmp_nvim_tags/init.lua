@@ -18,7 +18,7 @@ local function buildDocumentation(word, bufname)
   end
   local list_tags_ok, tags = bufname and pcall(vim.fn.taglist, word, bufname)
     or pcall(vim.fn.taglist, word)
-  if not list_tags_ok then
+  if not list_tags_ok or type(tags) ~= "table" then
     return ""
   end
 
