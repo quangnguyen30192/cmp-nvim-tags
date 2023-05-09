@@ -49,6 +49,12 @@ If you are using `cmp-nvim-lsp` with `cmp-nvim-tags`, you may face a weird error
 This is because neovim will register `tagfunc` as `vim.lsp.tagfunc` when lsp is attached, and there's no attached lsps
 supports `workspace/symbol` method. To prevent this behavior, add the following code in your config file:
 
+Besides, `vim.lsp.tagfunc` may also have performance issue since it is calling
+the lsp `workspace/symbol` method firstly and fallback to the default when the
+former one returns no result.
+
+If you feel that use `cmp-nvim-tags` is laggy, then you can consider to set `tagfunc` to nil.
+
 ```lua
 on_attach = function(bufnr, client)
     vim.bo.tagfunc = nil
