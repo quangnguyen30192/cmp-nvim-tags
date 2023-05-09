@@ -5,8 +5,8 @@ local source = {}
 local default_options = {
   complete_defer = 100,
   max_items = 10,
-  exact_match = true,
-  current_buffer_only = true,
+  exact_match = false,
+  current_buffer_only = false,
 }
 local global_options = {}
 
@@ -16,8 +16,16 @@ local function buildDocumentation(word, bufname)
   if global_options.exact_match then
     word = '^' .. word .. '$'
   end
-  local list_tags_ok, tags = bufname and pcall(vim.fn.taglist, word, bufname)
-    or pcall(vim.fn.taglist, word)
+
+  local list_tags_ok
+  local tags
+
+  if bufname then
+    list_tags_ok, tags = pcall(vim.fn.taglist, word, bufname)
+  else
+    list_tags_ok, tags = pcall(vim.fn.taglist, word)
+  end
+
   if not list_tags_ok or type(tags) ~= "table" then
     return ""
   end
