@@ -27,6 +27,9 @@ use {
           complete_defer = 100,
           -- Max items when searching `taglist`.
           max_items = 10,
+          -- The number of characters that need to be typed to trigger
+          -- auto-completion.
+          keyword_length = 3,
           -- Use exact word match when searching `taglist`, for better searching
           -- performance.
           exact_match = false,
