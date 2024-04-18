@@ -5,6 +5,7 @@ local source = {}
 local default_options = {
   complete_defer = 100,
   max_items = 10,
+  keyword_length = 3,
   exact_match = false,
   current_buffer_only = false,
 }
@@ -87,30 +88,33 @@ end
 function source:complete(request, callback)
   local items = {}
   global_options = vim.tbl_deep_extend('keep', request.option or {}, default_options)
-  vim.defer_fn(vim.schedule_wrap(function()
+  vim.defer_fn(function()
     local input = string.sub(request.context.cursor_before_line, request.offset)
-    local _, tags = pcall(function()
-      return vim.fn.getcompletion(input, "tag")
-    end)
 
-    if type(tags) ~= 'table' then
-      return {}
-    end
-    tags = tags or {}
-    for _, value in pairs(tags) do
-      local item = {
-        word =  value,
-        label =  value,
-        kind = cmp.lsp.CompletionItemKind.Tag,
-      }
-      items[#items+1] = item
+    if string.len(input) >= global_options.keyword_length then
+      local _, tags = pcall(function()
+        return vim.fn.getcompletion(input, "tag")
+      end)
+
+      if type(tags) ~= 'table' then
+        return {}
+      end
+      tags = tags or {}
+      for _, value in pairs(tags) do
+        local item = {
+          word =  value,
+          label =  value,
+          kind = cmp.lsp.CompletionItemKind.Tag,
+        }
+        items[#items+1] = item
+      end
     end
 
     callback({
       items = items,
       isIncomplete = true
     })
-  end), global_options.complete_defer)
+  end, global_options.complete_defer)
 end
 
 function source:resolve(completion_item, callback)
