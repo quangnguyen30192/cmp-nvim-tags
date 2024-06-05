@@ -69,6 +69,18 @@ end
 require('lspconfig').sqls.setup {
     on_attach = on_attach
 }
+
+
+-- Occasionally, due to potential execution order issues: you might set tagfunc
+-- to nil, but the LSP could re-register it later. So that you may need a
+-- "brute force way" to ask neovim will always fallback to the default tag
+-- search method immediately.
+TAGFUNC_ALWAYS_EMPTY = function()
+    return {}
+end
+
+-- if tagfunc is already registered, nvim lsp will not try to set tagfunc as vim.lsp.tagfunc.
+vim.o.tagfunc = "v:lua.TAGFUNC_ALWAYS_EMPTY"
 ```
 
 # Credit
