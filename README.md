@@ -76,7 +76,7 @@ require('lspconfig').sqls.setup {
 -- "brute force way" to ask neovim will always fallback to the default tag
 -- search method immediately.
 TAGFUNC_ALWAYS_EMPTY = function()
-    return {}
+    return vim.NIL
 end
 
 -- if tagfunc is already registered, nvim lsp will not try to set tagfunc as vim.lsp.tagfunc.
